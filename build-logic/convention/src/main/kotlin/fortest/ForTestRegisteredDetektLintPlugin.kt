@@ -1,4 +1,4 @@
-package components.sqa
+package fortest
 
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
@@ -18,17 +18,16 @@ import extensions.isJvmApp
 import extensions.isJvmLib
 import extensions.library
 import extensions.libs
-import extensions.plugin
 
-class DetektLintPlugin: Plugin<Project> {
+class ForTestRegisteredDetektLintPlugin: Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.apply("detekt".plugin(libs))
+            pluginManager.apply("io.gitlab.arturbosch.detekt")//"detekt".plugin(libs))
             val extension = extensions.getByType<DetektExtension>()
             when {
                 isAndroidApp() || isFeature() || isComposeLib()  -> configureDetektCompose(extension)
                 isAndroidLib() || isJvmLib() || isJvmApp() -> configureDetekt(extension)
-                else -> throw UnsupportedOperationException("Android or Jvm library or application plugin is missed")
+                else -> configureDetekt(extension) //throw UnsupportedOperationException("Android or Jvm library or application plugin is missed")
             }
 
             // Configure jvmTarget for gradle task `detekt`

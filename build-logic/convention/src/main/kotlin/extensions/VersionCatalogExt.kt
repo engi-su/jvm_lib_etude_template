@@ -1,9 +1,16 @@
 package extensions
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependencyBundle
 import org.gradle.api.artifacts.MinimalExternalModuleDependency
 import org.gradle.api.artifacts.VersionCatalog
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.getByType
+
+// ToDo consider internal
+val Project.libs
+    get(): VersionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 fun String.version(libs: VersionCatalog): String = libs.findVersion(this).get().toString()
 fun String.library(libs: VersionCatalog): Provider<MinimalExternalModuleDependency> = libs.findLibrary(this).get()

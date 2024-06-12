@@ -9,6 +9,7 @@ min-sdk = "29"
 
 #<-----build-logic----->
 #local.android.app && all local apps and libs && feature
+agp = "8.3.1" #android gradle plugin, see PS-111
 kotlin = "1.9.22" #see PS-111
 android-desugar-jdk-libs = "2.0.4"
 
@@ -168,6 +169,7 @@ ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = 
 
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" } #https://kotlinlang.org/docs/whatsnew18.html
 kgp = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" } #kotlin-plugin
+agp = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" } #android-gradlePlugin
 
 #build-logic lint
 
@@ -278,6 +280,12 @@ mapto = ["ksp", "mapto"]
 
 [plugins]
 #<-----build-logic----->
+#local.android.app
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" } #jetbrainsKotlinAndroid
+
+#local.android.lib && feature
+android-library = { id = "com.android.library", version.ref = "agp" }
 
 #local.jvm.app && local.jvm.lib
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -310,6 +318,7 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 
 kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "dsl" }
 
+android-test = { id = "com.android.test", version.ref = "agp" }
 
 #build-logic lint
 

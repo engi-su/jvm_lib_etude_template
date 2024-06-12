@@ -1,6 +1,8 @@
-import components.libs
 import extensions.asString
+import extensions.isAndroidApp
+import extensions.isComposeLib
 import extensions.library
+import extensions.libs
 import extensions.version
 
 plugins{
@@ -22,6 +24,13 @@ spotless {
         indentWithSpaces()
         endWithNewline()
         ktlint("ktlint".version(libs))
+            .customRuleSets(
+                if(isComposeLib() || isAndroidApp()) {
+                    listOf(
+                        "ktlint-compose".library(libs).asString()
+                    )
+                } else emptyList()
+            )
             .setEditorConfigPath("$rootDir/config/.editorconfig")
             .editorConfigOverride(
                 mapOf(

@@ -26,11 +26,8 @@ val impl = providers.systemProperty("impl").orNull != null
 
 kotlin {
     jvmToolchain(libs.versions.java.get().toInt())
-
-    compilerOptions {
-        allWarningsAsErrors = true
-    }
 }
+
 
 publishing {
     repositories {
@@ -114,12 +111,24 @@ tasks {
 }
 
 dependencies {
+    compileOnly(libs.agp)
     runtimeOnly(libs.plugins.kotlin.dsl.asDependency())
+    runtimeOnly(libs.plugins.android.library.asDependency())
+    runtimeOnly(libs.plugins.android.application.asDependency())
+    runtimeOnly(libs.plugins.kotlin.android.asDependency())
+
+    implementation(libs.plugins.room.asDependency())
+    implementation(libs.plugins.ksp.asDependency())
+
+    compileOnly(libs.plugins.kotlin.android.asDependency())
 
     implementation(libs.plugins.detekt.asDependency())
     implementation(libs.plugins.spotless.asDependency())
+    //implementation(libs.ktlint)
 
     implementation(libs.plugins.kover.asDependency())
+
+
 }
 
 // Groovy code can depend on Kotlin code
@@ -137,6 +146,14 @@ tasks.withType<KotlinCompile>().configureEach {
     }
 }
 
+gradlePlugin {
+    plugins {
+        register("detekt-lint") {
+            id = "fortest.detekt"
+            implementationClass = "fortest.ForTestRegisteredDetektLintPlugin"
+        }
+    }
+}
 //ToDo Private
 fun Provider<PluginDependency>.asDependency() = this.map { "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}" }
 infix fun dependencyOf(plugin: Provider<PluginDependency>) = plugin.asDependency()

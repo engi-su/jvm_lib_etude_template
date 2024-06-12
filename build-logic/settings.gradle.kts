@@ -26,9 +26,5 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
-val isCI = !System.getenv("CI").isNullOrEmpty()
-
-rootProject.name = "jvm-lib-template"
-include(":build-logic")
-include(":build-logic:convention")
-
+rootProject.name = "build-logic"
+include(":convention")

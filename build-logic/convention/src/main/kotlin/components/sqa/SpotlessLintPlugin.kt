@@ -1,11 +1,20 @@
 package components.sqa
 
 import com.diffplug.gradle.spotless.SpotlessExtension
-import components.libs
-import extensions.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
+import extensions.asString
+import extensions.isAndroidApp
+import extensions.isAndroidLib
+import extensions.isComposeLib
+import extensions.isFeature
+import extensions.isJvmApp
+import extensions.isJvmLib
+import extensions.library
+import extensions.libs
+import extensions.plugin
+import extensions.version
 
 class SpotlessLintPlugin: Plugin<Project> {
     override fun apply(target: Project) {
@@ -13,8 +22,32 @@ class SpotlessLintPlugin: Plugin<Project> {
             pluginManager.apply("spotless".plugin(libs))
             val extension = extensions.getByType<SpotlessExtension>()
             when {
-                isJvmLib() -> configureSpotless(extension)
-                else -> throw UnsupportedOperationException("Jvm library plugin is missed")
+                isAndroidApp() || isFeature() || isComposeLib()  -> configureSpotlessCompose(extension)
+                isAndroidLib() || isJvmLib() || isJvmApp() -> configureSpotless(extension)
+                else -> throw UnsupportedOperationException("Android or Jvm library or application plugin is missed")
+            }
+        }
+    }
+    private fun Project.configureSpotlessCompose(extension: SpotlessExtension) {
+        configureSpotlessBase(extension)
+        extension.apply {
+            kotlin{
+                ktlint("ktlint".version(libs))
+                /*
+                ToDo PS-106
+                .setEditorConfigPath("$projectDir/config/.editorconfig")  // sample unusual placement
+                   .editorConfigOverride(
+                        mapOf(
+                            "indent_size" to 2,
+                        )
+                    )
+                 */
+
+                    .customRuleSets(
+                        listOf(
+                            "ktlint-compose".library(libs).asString()
+                        )
+                    )
             }
         }
     }
